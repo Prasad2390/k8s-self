@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myrs
+spec:
+  replicas: 3
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - swiggy
+          - zomato
+  template:
+    metadata:
+      labels:
+        app: swiggy
+        app: zomato
+    spec:
+      containers:
+        - name: cont1
+          image: shaikmustafa/cycle
+          ports:
+            - containerPort: 80
+
+
+  create svc to expose          
