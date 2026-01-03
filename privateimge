@@ -1,0 +1,19 @@
+creating a pod with image by pulling from private repository--------
+
+create secret docker-registry mysc --docker-server=https://index.docker.io/v1/ --docker-username=prasa239 --docker-password="Prasad@2390" --docker-email=vanacharlavaraprasad@gmail.com
+-------------------
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+  labels:
+    app: swiggy
+spec:
+  containers:
+    - name: cont1
+      image: prasa239/devops:myimg
+      ports:
+        - containerPort: 80
+  imagePullSecrets:
+     - name: mysc
