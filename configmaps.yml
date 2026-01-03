@@ -1,0 +1,59 @@
+------configfile for secret------
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-cm
+data:
+  # Key-value pairs
+  APP_NAME: "MyApp"
+  APP_ENV: "development"
+  DATABASE_URL: "http://dev-database.example.com"
+
+  
+------------injecting entire secret to pod---------
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-1
+spec:
+  containers:
+    - name: cont1
+      image: shaikmustafa/dm
+      ports:
+        -  containerPort: 80
+      envFrom:
+        - configMapRef:
+             name: thirdsc
+
+ -----------injecting multiple keys to pod-------            
+
+  apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-2
+spec:
+  containers:
+    - name: cont1
+      image: shaikmustafa/dm
+      env:
+        - name: first
+          valueFrom:
+            configMapKeyRef:
+              name: firstsc
+              key: dept
+
+        - name: second
+          valueFrom:
+            configMapKeyRef:
+              name: secondsc
+              key: user
+           
+
+-------------commands----------             
+
+kubectl create secret generic firstsc --from-literal=app=zomato --from-literal=dept=food
+kubectl describe secret firstsc
+kubectl create secret generic secondsc --from-env-file=sc.env
+echo "mysql" | base 64
