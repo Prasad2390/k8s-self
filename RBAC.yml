@@ -1,0 +1,78 @@
+--commands to create a rbac certificates---
+
+mkdir mustafa-user && cd mustafa-user
+openssl genrsa -out mustafa.key 2048
+openssl req -new -key mustafa.key -out mustafa.csr -subj "/CN=mustafa/O=group1"
+openssl x509 -req -in mustafa.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out mustafa.crt -days 500
+kubectl config set-credentials mustafa --client-certificate=mustafa.crt --client-key=mustafa.key
+kubectl config view
+kubectl config set-context my-context --cluster=minikube --user=mustafa
+
+
+---creating role& role binding----
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: dev-role
+  namespace: dev
+rules:
+  - apiGroups: ["*"]
+    resources: ["pods", "deployments"]
+    verbs: ["get" , "list" , "watch"]
+ - apiGroups: ["*"]
+    resources: ["services"]
+    verbs: ["list" , "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mustafa-rb
+  namespace: dev
+subjects:
+  - kind: User
+    name: mustafa
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: dev-role
+  apiGroup: rbac.authorization.k8s.io
+
+
+kubectl config view
+kubectl config use-context my-context
+
+
+-----creating clusterrole & clusterrolebinding----
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: my-role
+rules:
+  - apiGroups: ["*"]
+    resources: ["pods", "deployments"]
+    verbs: ["get" , "list" , "watch"]
+  - apiGroups: ["apps"]
+    resources: ["services"]
+    verbs: ["list" , "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mustafa-crb
+subjects:
+  - kind: User
+    name: mustafa
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: my-role
+  apiGroup: rbac.authorization.k8s.io
+
+
+kubectl config view
+kubectl config use-context my-context
