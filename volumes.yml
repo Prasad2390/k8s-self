@@ -1,0 +1,34 @@
+----host path in volumes
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydep
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+        - name: cont1
+          image: ubuntu
+          command: ["/bin/bash", "-c", "while true; do echo Welcome to DevOps class; sleep 10; done"]
+           volumeMounts:
+            - mountPath: /tmp/jenkins
+              name: devops
+        - name: cont2
+          image: ubuntu
+          command: ["/bin/bash", "-c", "while true; do echo Welcome to DevOps class; sleep 10; done"]
+          volumeMounts:
+            - mountPath: /tmp/docker
+              name: devops
+      volumes:
+        - name: devops
+          hostPath:
+            path: /tmp/mydata
+                               
