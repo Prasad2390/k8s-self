@@ -31,4 +31,9 @@ spec:
         - name: devops
           hostPath:
             path: /tmp/mydata
+
+ ---------volumes in emptydir-----
+ volumes:
+   - name: devops
+     emptyDir: {}
                                
